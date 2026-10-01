@@ -110,7 +110,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   </header>
 
   <form id="ficha" class="tela" novalidate autocomplete="on">
-    <p class="lede">Preencha com os seus dados, igual aos seus documentos. No final, a ficha volta para o escritório pelo WhatsApp.</p>
+    <p class="lede">Preencha com os seus dados, conforme constam em seus documentos. No final, a ficha volta para o escritório pelo WhatsApp.</p>
     <p class="aviso warn" id="rascunho" hidden>Guardamos o que você já tinha preenchido. <button type="button" class="btn min" id="btn-zerar" style="display:inline-flex;margin-top:8px">Apagar e começar de novo</button></p>
 
     <section class="bloco" aria-labelledby="h-1">
@@ -168,7 +168,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
     </section>
 
     <section class="bloco" aria-labelledby="h-2">
-      <h2 id="h-2">Onde você mora</h2>
+      <h2 id="h-2">Endereço residencial</h2>
       <div class="campos">
         <div class="campo">
           <label for="f_logradouro">Rua ou avenida</label>
@@ -180,7 +180,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
           <input type="text" id="f_numero" class="num" data-k maxlength="10" autocomplete="off">
         </div>
         <div class="campo c4">
-          <label for="f_complemento">Complemento <span class="opc">(se tiver)</span></label>
+          <label for="f_complemento">Complemento</label>
           <input type="text" id="f_complemento" data-k autocomplete="address-line2" placeholder="Apto, bloco, casa">
         </div>
         <p class="erro campo" id="e_endereco_numero" hidden></p>
@@ -216,7 +216,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
           <p class="erro" id="e_celular" hidden></p>
         </div>
         <div class="campo">
-          <label for="f_email">E-mail <span class="opc">(se tiver)</span></label>
+          <label for="f_email">E-mail</label>
           <input type="email" id="f_email" data-k inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false">
           <p class="sugestao" id="s_email" hidden></p>
           <p class="erro" id="e_email" hidden></p>
@@ -627,10 +627,9 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
     // Todo CEP do Rio Grande do Sul começa por 9, e só os dele.
     else if (UFS.indexOf(e.uf) >= 0 && (e.uf === 'RS') !== (e.cep.charAt(0) === '9'))
       erros['endereco.uf'] = e.uf === 'RS' ? 'Este CEP não é do Rio Grande do Sul. Confira o CEP e o estado.' : 'Este CEP é do Rio Grande do Sul. Confira o CEP e o estado.';
-    if (f.email) {
-      if (!validarEmail(f.email)) erros.email = 'Este e-mail está incompleto. Exemplo: nome@gmail.com';
-      else if (sugestaoEmail(f.email)) avisos.push('E-mail: você quis dizer ' + sugestaoEmail(f.email) + '?');
-    }
+    if (!f.email) erros.email = 'Escreva o seu e-mail.';
+    else if (!validarEmail(f.email)) erros.email = 'Este e-mail está incompleto. Exemplo: nome@gmail.com';
+    else if (sugestaoEmail(f.email)) avisos.push('E-mail: você quis dizer ' + sugestaoEmail(f.email) + '?');
     if (!f.celular) erros.celular = 'Escreva o celular com o DDD.';
     else if (!validarCelular(f.celular)) erros.celular = 'Confira o celular: DDD e mais 9 números. Exemplo: (51) 99999-0000.';
     if (!f.consentimento) erros.consentimento = 'Marque a autorização para poder enviar.';
@@ -1088,7 +1087,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
     if (f.nacionalidade !== "brasileira") linhas.push(["Nacionalidade", f.nacionalidade]);
     linhas.push(["Endereço", e.logradouro + ", " + (e.numero === "s/nº" ? "sem número" : "nº " + e.numero) + (e.complemento ? ", " + e.complemento : "")],
       ["Bairro", e.bairro], ["Cidade", e.cidade + "/" + e.uf], ["CEP", d.cep_formatado], ["Celular", d.celular_formatado]);
-    if (f.email) linhas.push(["E-mail", f.email]);
+    linhas.push(["E-mail", f.email]);
     $("resumo").innerHTML = linhas.map(function (l) { return "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1] || "") + "</dd></div>"; }).join("");
     atualizarEnvio();
     // A conferência foi refeita: o que foi enviado ou copiado antes já não vale.
