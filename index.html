@@ -906,6 +906,7 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
 (function () {
   "use strict";
   var C = window.FichaCore;
+  var CFG = {"equipe": [{"apelido": "filipe", "nome": "Filipe", "whatsapp": "5551992465434"}, {"apelido": "glaucia", "outros": ["glacia"], "nome": "Glaucia", "whatsapp": "5551992544020"}, {"apelido": "rafaela", "nome": "Rafaela", "whatsapp": "5551993200462"}, {"apelido": "pedro", "nome": "Pedro", "whatsapp": "5551989294326"}, {"apelido": "henrique", "nome": "Henrique", "whatsapp": "5551982052079"}]};
   var RASCUNHO = "haack-ficha-rascunho-v2";
   var VALIDADE_MS = 7 * 24 * 3600 * 1000;
   // chave de erro do núcleo -> [controle que recebe o foco, parágrafo de erro]
@@ -933,10 +934,12 @@ input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="tr
   $("f_uf").innerHTML = C.UFS.map(function (u) { return '<option value="' + u + '"' + (u === "RS" ? " selected" : "") + ">" + u + "</option>"; }).join("");
 
   /* ---------- para quem a ficha volta ---------- */
-  // O link pode trazer o WhatsApp de quem enviou (…#5551999990000). Sem número, o cliente escolhe a conversa.
-  var DESTINO = C.destinoWhatsApp((location.hash || "").replace(/^#/, ""));
+  // O link diz quem enviou: o nome de alguém da equipe (…#filipe) ou um WhatsApp (…#5551999990000). Sem isso, o cliente escolhe a conversa.
+  var MARCA = C.chave((location.hash || "").replace(/^#/, ""));
+  var PESSOA = (CFG.equipe || []).filter(function (p) { return p.apelido === MARCA || (p.outros || []).indexOf(MARCA) >= 0; })[0];
+  var DESTINO = C.destinoWhatsApp(PESSOA ? PESSOA.whatsapp : MARCA);
   $("dica-envio").textContent = DESTINO
-    ? "O WhatsApp vai abrir com a ficha pronta para " + C.fmtTelefone(DESTINO) + ". É só tocar em enviar."
+    ? "O WhatsApp vai abrir com a ficha pronta para " + (PESSOA ? PESSOA.nome + ", " : "") + C.fmtTelefone(DESTINO) + ". É só tocar em enviar."
     : "O WhatsApp vai abrir. Escolha a conversa de quem pediu a ficha e toque em enviar.";
   $("depois-texto").textContent = DESTINO
     ? "O WhatsApp abriu com a ficha escrita. Toque na seta de enviar e pronto."
